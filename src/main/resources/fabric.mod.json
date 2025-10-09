@@ -1,0 +1,34 @@
+{
+	"schemaVersion": 1,
+	"id": "craftingtablepy",
+	"version": "${version}",
+	"name": "CraftingTable.py",
+	"description": "CraftingTable.py is a Fabric mod that enables Python scripts to control and interact with Minecraft events and commands in an intuitive, event-driven way.",
+	"authors": [
+		"Ritsucraft_"
+	],
+	"contact": {
+		"homepage": "https://modrinth.com/project/craftingtablepy",
+		"sources": "https://github.com/rit3776/CraftingTable.py"
+	},
+	"license": "MIT",
+	"icon": "assets/craftingtablepy/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"dev.rit3776.craftingtablepy.CraftingTablepy"
+		]
+	},
+	"mixins": [
+		"craftingtablepy.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.17.2",
+		"minecraft": "~1.20.4",
+		"java": ">=17",
+		"fabric-api": "*"
+	},
+	"suggests": {
+		"another-mod": "*"
+	}
+}
