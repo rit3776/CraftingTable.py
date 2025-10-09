@@ -1,4 +1,4 @@
-# CraftingTable.py (1.20.4)
+# CraftingTable.py
 
 **CraftingTable.py** is a Fabric mod that allows you to control Minecraft using Python scripts in an event-driven way. Inspired by `discord.py`, it lets you handle server events asynchronously and execute commands directly from Python.
 
