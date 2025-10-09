@@ -6,6 +6,17 @@
 
 ---
 
+## Requirements
+
+To use CraftingTable.py, the following software is required:
+* Fabric Loader: 0.17.2 or higher
+* Fabric API: 0.97.3 or higher
+* Java: 17 or higher
+* Python: 3.11 recommended (other versions may also work)
+Make sure these dependencies are installed before running the mod.
+
+---
+
 ## Provided Event Functions
 
 You can define the following asynchronous functions in `mod.py` to respond to in-game events:
