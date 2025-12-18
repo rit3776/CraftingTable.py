@@ -2,21 +2,38 @@
 # * Licensed under the MIT License.
 import asyncio
 import importlib.util
-import inspect
 import os
 import sys
 import json
 
 # ========================================
-# CraftingTable.py Core (0.0.1)
+# CraftingTable.py Core (α-0.0.2)
 # ========================================
+
+sys.modules["craftingtable"] = sys.modules[__name__]
 
 HOST = "127.0.0.1"
 PORT = 52577
 
 _event_handlers = {}
 _writer = None
+_user_mod = None
 
+# Event decorator
+def event(name: str, *, priority: int = 0):
+    def decorator(func):
+        if not asyncio.iscoroutinefunction(func):
+            print(f"[CraftingTable.py] '{func.__name__}' is not async, ignored.")
+            return func
+
+        handlers = _event_handlers.setdefault(name, [])
+        handlers.append((priority, func))
+
+        # sort handlers by priority
+        handlers.sort(key=lambda x: x[0], reverse=True)
+
+        return func
+    return decorator
 
 # Run command to Minecraft
 def cmd(cmd: str):
@@ -36,41 +53,40 @@ def log(message: str):
 
     asyncio.create_task(_writer.drain())
 
-# Register event handler
-def _register_event(name, func):
-    if asyncio.iscoroutinefunction(func):
-        _event_handlers[name] = func
-    else:
-        print(f"[CraftingTable.py] '{name}' is not async, ignored.")
-
+# Trigger reload of mod.py
+def reload_mod():
+    _event_handlers.clear()
+    _load_user_module()
+    log("mod.py reloaded")
 
 # Read mod.py and register event handlers
 def _load_user_module(path: str = "config/craftingtablepy/mod.py"):
     if not os.path.exists(path):
-        print("[CraftingTable.py] mod.py not found.")
+        log("mod.py not found.")
         sys.exit(1)
 
-    spec = importlib.util.spec_from_file_location("mod", path)
+    global _user_mod
+    spec = importlib.util.spec_from_file_location("user_mod", path)
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)
 
-    # Register functions starting with "on_"
-    for name, func in inspect.getmembers(mod, inspect.isfunction):
-        if name.startswith("on_"):
-            _register_event(name, func)
+    _user_mod = mod
 
 
 # Event dispatcher
 async def _dispatch_event(name: str, **data):
-    func = _event_handlers.get(name)
-    if func:
+    handlers = _event_handlers.get(name)
+    if not handlers:
+        print(f"[CraftingTable.py] (ignored event) {name}")
+        log(f"(ignored event) {name}")
+        return
+
+    for priority, func in handlers:
         try:
             await func(**data)
         except Exception as e:
             print(f"[CraftingTable.py] Error in {name}: {e}")
-    else:
-        print(f"[CraftingTable.py] (ignored event) {name}")
-
+            log(f"Error in event '{name}': {e}")
 
 # Main listening loop
 async def _listen_to_server(reader):
@@ -87,9 +103,10 @@ async def _listen_to_server(reader):
             continue
 
         if payload.get("type") == "event":
-            event_name = payload["name"]
-            data = payload.get("data", {})
-            await _dispatch_event(event_name, **data)
+            await _dispatch_event(payload["name"], **payload.get("data", {}))
+        elif payload.get("type") == "control":
+            if payload.get("action") == "reload":
+                reload_mod()
         else:
             print(f"[Minecraft] {msg}")
 
@@ -112,4 +129,5 @@ def start():
     except KeyboardInterrupt:
         print("\n[CraftingTable.py] Stopped by user.")
 
-start()
+if __name__ == "__main__":
+    start()
