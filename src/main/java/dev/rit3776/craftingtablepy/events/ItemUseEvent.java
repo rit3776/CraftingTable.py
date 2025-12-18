@@ -34,7 +34,7 @@ public class ItemUseEvent {
             data.put("count", stack.getCount());
             data.put("nbt", nbt != null ? nbt.asString() : null);
 
-            bridge.sendEvent("on_item_use", data);
+            bridge.sendEvent("item_use", data);
 
             return TypedActionResult.pass(stack);
         });
