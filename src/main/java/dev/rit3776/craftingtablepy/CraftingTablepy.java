@@ -5,6 +5,10 @@
 package dev.rit3776.craftingtablepy;
 
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.minecraft.server.command.ServerCommandSource;
+
+import static net.minecraft.server.command.CommandManager.literal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +37,26 @@ public class CraftingTablepy implements ModInitializer {
         List<String> detected = PythonEventScanner.scanEvents();
         EventRegistry.registerDetectedEvents(detected, pythonBridge);
 
-        LOGGER.info("[CraftingTable.py] Initialized successfully!");
+        LOGGER.info("[CraftingTable.py] Python events initialized successfully!");
+
+        CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
+            dispatcher.register(
+                literal("ctpy")
+                    .requires(source -> source.hasPermissionLevel(4)) //Op only
+                    .then(
+                        literal("reload")
+                            .executes(context -> {
+                                ServerCommandSource source = context.getSource();
+                                if (pythonBridge.sendReload()) {
+                                    source.sendMessage(net.minecraft.text.Text.literal("[CraftingTable.py] Sent reload command to Python."));
+                                } else {
+                                    source.sendMessage(net.minecraft.text.Text.literal("[CraftingTable.py] Failed to send reload command to Python."));
+                                }
+                                return 1;
+                            })
+                    )
+            );
+        });
     }
 
     private static void ensureUserScriptExists() {
@@ -76,4 +99,5 @@ public class CraftingTablepy implements ModInitializer {
     public static PythonBridge getBridge() {
         return pythonBridge;
     }
+
 }
