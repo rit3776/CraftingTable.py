@@ -119,4 +119,22 @@ public class PythonBridge {
             out.println(json);
         }
     }
+
+    // Send control message to Python
+    public boolean sendReload() {
+        if (out != null) {
+            Map<String, Object> payload = Map.of(
+                "type", "control",
+                "action", "reload"
+            );
+            String json = new Gson().toJson(payload);
+            out.println(json);
+
+            CraftingTablepy.LOGGER.info("[CraftingTable.py] Sent reload request to Python.");
+            return true;
+        } else {
+            CraftingTablepy.LOGGER.warn("[CraftingTable.py] Cannot reload: Python not connected.");
+            return false;
+        }
+    }
 }
