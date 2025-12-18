@@ -17,10 +17,10 @@ public class EventRegistry {
 
         for (String event : detectedEvents) {
             switch (event) {
-                case "on_player_join" -> PlayerJoinEvent.register(bridge);
-                case "on_player_leave" -> PlayerLeaveEvent.register(bridge);
-                case "on_chat" -> ChatEvent.register(bridge);
-                case "on_item_use" -> ItemUseEvent.register(bridge);
+                case "player_join" -> PlayerJoinEvent.register(bridge);
+                case "player_leave" -> PlayerLeaveEvent.register(bridge);
+                case "chat" -> ChatEvent.register(bridge);
+                case "item_use" -> ItemUseEvent.register(bridge);
                 default -> LOGGER.warn("[CraftingTable.py] Unknown event: " + event);
             }
         }
