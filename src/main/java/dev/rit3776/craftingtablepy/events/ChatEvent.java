@@ -17,7 +17,7 @@ public class ChatEvent {
             data.put("message", content);
             data.put("type", typeKey.toString());
 
-            bridge.sendEvent("on_chat", data);
+            bridge.sendEvent("chat", data);
         });
     }
 }
