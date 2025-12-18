@@ -130,9 +130,7 @@ The event system has changed from "naming convention" to "decorator-based". **Ol
 | Version | Example Code in `mod.py` |
 | --- | --- |
 | **Old (v0.0.1)** | `async def on_chat(message, type, player):` |
-| **New (v0.0.2)** | `@mc.event("chat")`<br>
-
-<br>`async def on_chat(message, type, player):` |
+| **New (v0.0.2)** | `@mc.event("chat")`<br>`async def on_chat(message, type, player):` |
 
 ---
 
