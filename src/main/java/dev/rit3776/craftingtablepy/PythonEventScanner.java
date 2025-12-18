@@ -12,7 +12,7 @@ import org.slf4j.Logger;
 public class PythonEventScanner {
     private static final Logger LOGGER = CraftingTablepy.LOGGER;
     private static final String[] EVENTS = {
-        "on_player_join", "on_player_leave", "on_chat", "on_item_use"
+        "player_join", "player_leave", "chat", "item_use"
     };
 
     public static List<String> scanEvents() {
