@@ -15,7 +15,7 @@ public class PlayerJoinEvent {
             Map<String, Object> data = new HashMap<>();
             data.put("player", player.getName().getString());
             
-            bridge.sendEvent("on_player_join", data);
+            bridge.sendEvent("player_join", data);
         });
     }
 }
