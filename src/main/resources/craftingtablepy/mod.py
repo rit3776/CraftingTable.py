@@ -4,18 +4,29 @@
 
 import craftingtable as mc
 
-async def on_player_join(player):
+@mc.event("player_join")
+async def welcome_player(player):
     mc.cmd(f"title {player} actionbar Welcome to the server, {player}!")
     mc.cmd(f"give {player} minecraft:apple 5")
 
-async def on_player_leave(player):
+@mc.event("player_leave")
+async def player_left(player):
     mc.log(f"Player left: {player}")
 
-async def on_chat(message, type, player):
+@mc.event("chat")
+async def greeting(message, type, player):
     if message == "hello":
         mc.cmd(f"say Hello, {player}!")
 
-async def on_item_use(world, item_id, count, player, hand, nbt=None):
+@mc.event("item_use", priority=10)
+async def non_magical_stick(world, item_id, count, player, hand, nbt=None):
     if item_id == "stick":
         mc.cmd(f"say {player} used a non-magical stick...")
         mc.cmd(f"effect give {player} minecraft:slowness 5 1")
+
+@mc.event("item_use", priority=1)
+async def magical_book(world, item_id, count, player, hand, nbt=None):
+    mc.log(f"{player} used {item_id} x{count} (hand: {hand}, nbt: {nbt})")
+    if item_id == "enchanted_book":
+        mc.cmd(f"say {player} used a magical book")
+        mc.cmd(f"effect give {player} minecraft:levitation 5 1")
